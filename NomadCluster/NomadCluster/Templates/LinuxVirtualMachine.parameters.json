@@ -22,6 +22,21 @@
         },
         "projectName": {
             "value": "nomad"
+        },
+        "projectName2": {
+            "value": "nomad2"
+        },
+        "VirtualMachine03Name": {
+            "value": "nmcl03"
+        },
+        "VirtualMachine03AdminUserName": {
+            "value": "azureuser"
+        },
+        "VirtualMachine03AdminPassword": {
+            "value": "P@ssw0rd!"
+        },
+        "projectName3": {
+            "value": "nomad3"
         }
     }
 }

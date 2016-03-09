@@ -94,7 +94,52 @@
         "Standard_RAGRS",
         "Premium_LRS"
       ]
-    }
+    },
+      "projectName2": {
+          "type": "string",
+          "minLength": 1,
+          "metadata": {
+              "description": "Name of this project"
+          }
+      },
+      "StorageAccount03Type": {
+          "type": "string",
+          "defaultValue": "Standard_LRS",
+          "allowedValues": [
+              "Standard_LRS",
+              "Standard_ZRS",
+              "Standard_GRS",
+              "Standard_RAGRS",
+              "Premium_LRS"
+          ]
+      },
+      "VirtualMachine03Name": {
+          "type": "string",
+          "minLength": 1
+      },
+      "VirtualMachine03AdminUserName": {
+          "type": "string",
+          "minLength": 1
+      },
+      "VirtualMachine03AdminPassword": {
+          "type": "securestring"
+      },
+      "VirtualMachine03UbuntuOSVersion": {
+          "type": "string",
+          "defaultValue": "14.04.2-LTS",
+          "allowedValues": [
+              "12.04.5-LTS",
+              "14.04.2-LTS",
+              "15.04"
+          ]
+      },
+      "projectName3": {
+          "type": "string",
+          "minLength": 1,
+          "metadata": {
+              "description": "Name of this project"
+          }
+      }
   },
   "variables": {
     "imagePublisher": "Canonical",
@@ -124,7 +169,16 @@
     "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
     "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
     "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
-    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh"
+    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
+      "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
+      "VirtualMachine03ImagePublisher": "Canonical",
+      "VirtualMachine03ImageOffer": "UbuntuServer",
+      "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
+      "VirtualMachine03VmSize": "Standard_D1",
+      "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+      "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
+      "VirtualMachine03StorageAccountContainerName": "vhds",
+      "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]",
   },
   "resources": [
     {
@@ -361,7 +415,143 @@
             }
           ]
         }
+      },
+        "resources": [
+            {
+                "name": "NomadInstallScript02",
+                "type": "extensions",
+                "location": "[resourceGroup().location]",
+                "apiVersion": "2015-06-15",
+                "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine02Name'))]"
+                ],
+                "tags": {
+                    "displayName": "NomadInstallShellScript02"
+                },
+                "properties": {
+                    "publisher": "Microsoft.OSTCExtensions",
+                    "type": "CustomScriptForLinux",
+                    "typeHandlerVersion": "1.4",
+                    "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "fileUris": [
+                      "[variables('NomadInstallShellURL')]"
+                    ],
+                    "commandToExecute": "bash NomadInstallScript01.sh"
+                  }
+                }
+            }
+        ]
+    },
+      {
+          "name": "[variables('StorageAccount03Name')]",
+          "type": "Microsoft.Storage/storageAccounts",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [ ],
+          "tags": {
+              "displayName": "StorageAccount03"
+          },
+          "properties": {
+              "accountType": "[parameters('StorageAccount03Type')]"
+          }
+      },
+      {
+          "name": "[variables('VirtualMachine03NicName')]",
+          "type": "Microsoft.Network/networkInterfaces",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+              "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+          ],
+          "tags": {
+              "displayName": "VirtualMachine03Nic"
+          },
+          "properties": {
+              "ipConfigurations": [
+                  {
+                      "name": "ipconfig1",
+                      "properties": {
+                          "privateIPAllocationMethod": "Dynamic",
+                          "subnet": {
+                              "id": "[variables('VirtualMachine03SubnetRef')]"
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "name": "[parameters('VirtualMachine03Name')]",
+          "type": "Microsoft.Compute/virtualMachines",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+              "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccount03Name'))]",
+              "[concat('Microsoft.Network/networkInterfaces/', variables('VirtualMachine03NicName'))]"
+          ],
+          "tags": {
+              "displayName": "VirtualMachine03"
+          },
+          "properties": {
+              "hardwareProfile": {
+                  "vmSize": "[variables('VirtualMachine03VmSize')]"
+              },
+              "osProfile": {
+                  "computerName": "[parameters('VirtualMachine03Name')]",
+                  "adminUsername": "[parameters('VirtualMachine03AdminUsername')]",
+                  "adminPassword": "[parameters('VirtualMachine03AdminPassword')]"
+              },
+              "storageProfile": {
+                  "imageReference": {
+                      "publisher": "[variables('VirtualMachine03ImagePublisher')]",
+                      "offer": "[variables('VirtualMachine03ImageOffer')]",
+                      "sku": "[parameters('VirtualMachine03UbuntuOSVersion')]",
+                      "version": "latest"
+                  },
+                  "osDisk": {
+                      "name": "VirtualMachine03OSDisk",
+                      "vhd": {
+                          "uri": "[concat('http://', variables('StorageAccount03Name'), '.blob.core.windows.net/', variables('VirtualMachine03StorageAccountContainerName'), '/', variables('VirtualMachine03OSDiskName'), '.vhd')]"
+                      },
+                      "caching": "ReadWrite",
+                      "createOption": "FromImage"
+                  }
+              },
+              "networkProfile": {
+                  "networkInterfaces": [
+                      {
+                          "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VirtualMachine03NicName'))]"
+                      }
+                  ]
+              }
+          },
+          "resources": [
+              {
+                  "name": "NomadInstallScript03",
+                  "type": "extensions",
+                  "location": "[resourceGroup().location]",
+                  "apiVersion": "2015-06-15",
+                  "dependsOn": [
+                      "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine03Name'))]"
+                  ],
+                  "tags": {
+                      "displayName": "NomadInstallScript03"
+                  },
+                  "properties": {
+                      "publisher": "Microsoft.OSTCExtensions",
+                      "type": "CustomScriptForLinux",
+                      "typeHandlerVersion": "1.4",
+                      "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "fileUris": [
+                        "[variables('NomadInstallShellURL')]"
+                      ],
+                      "commandToExecute": "bash NomadInstallScript01.sh"
+                    }
+                  }
+              }
+          ]
       }
-    }
   ]
 }
