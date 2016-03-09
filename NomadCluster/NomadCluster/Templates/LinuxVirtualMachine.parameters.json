@@ -6,13 +6,13 @@
             "value": "azureuser"
         },
         "dnsNameForPublicIP": {
-            "value": "nm01"
+            "value": "nmcl01"
         },
         "adminPassword": {
             "value": "P@ssw0rd!"
         },
         "VirtualMachine02Name": {
-            "value": "nm02"
+            "value": "nmcl02"
         },
         "VirtualMachine02AdminUserName": {
             "value": "azureuser"
