@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "_artifactsLocation": {
@@ -140,6 +140,45 @@
         "15.04"
       ]
     }
+  },
+  "variables": {
+    "imagePublisher": "Canonical",
+    "imageOffer": "UbuntuServer",
+    "OSDiskName": "osdiskforlinuxsimple",
+    "nicName": "myVMNic",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetName": "Subnet",
+    "subnetPrefix": "10.0.0.0/24",
+    "vhdStorageType": "Standard_LRS",
+    "publicIPAddressType": "Dynamic",
+    "vhdStorageContainerName": "vhds",
+    "vmName": "MyUbuntuVM",
+    "vmSize": "Standard_D1",
+    "virtualNetworkName": "MyVNET",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+    "vhdStorageName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
+    "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
+    "VirtualMachine02ImagePublisher": "Canonical",
+    "VirtualMachine02ImageOffer": "UbuntuServer",
+    "VirtualMachine02OSDiskName": "VirtualMachine02OSDisk",
+    "VirtualMachine02VmSize": "Standard_D1",
+    "VirtualMachine02VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
+    "VirtualMachine02StorageAccountContainerName": "vhds",
+    "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
+    "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
+    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
+    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
+    "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
+    "VirtualMachine03ImagePublisher": "Canonical",
+    "VirtualMachine03ImageOffer": "UbuntuServer",
+    "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
+    "VirtualMachine03VmSize": "Standard_D1",
+    "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
+    "VirtualMachine03StorageAccountContainerName": "vhds",
+    "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
   },
   "resources": [
     {
@@ -514,44 +553,5 @@
         }
       ]
     }
-  ],
-  "variables": {
-    "imagePublisher": "Canonical",
-    "imageOffer": "UbuntuServer",
-    "OSDiskName": "osdiskforlinuxsimple",
-    "nicName": "myVMNic",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetName": "Subnet",
-    "subnetPrefix": "10.0.0.0/24",
-    "vhdStorageType": "Standard_LRS",
-    "publicIPAddressType": "Dynamic",
-    "vhdStorageContainerName": "vhds",
-    "vmName": "MyUbuntuVM",
-    "vmSize": "Standard_D1",
-    "virtualNetworkName": "MyVNET",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
-    "vhdStorageName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
-    "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
-    "VirtualMachine02ImagePublisher": "Canonical",
-    "VirtualMachine02ImageOffer": "UbuntuServer",
-    "VirtualMachine02OSDiskName": "VirtualMachine02OSDisk",
-    "VirtualMachine02VmSize": "Standard_D1",
-    "VirtualMachine02VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
-    "VirtualMachine02StorageAccountContainerName": "vhds",
-    "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
-    "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
-    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
-    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
-    "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
-    "VirtualMachine03ImagePublisher": "Canonical",
-    "VirtualMachine03ImageOffer": "UbuntuServer",
-    "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
-    "VirtualMachine03VmSize": "Standard_D1",
-    "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
-    "VirtualMachine03StorageAccountContainerName": "vhds",
-    "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
-  }
+  ]
 }
