@@ -178,7 +178,7 @@
       "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
       "VirtualMachine03StorageAccountContainerName": "vhds",
-      "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]",
+      "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
   },
   "resources": [
     {
