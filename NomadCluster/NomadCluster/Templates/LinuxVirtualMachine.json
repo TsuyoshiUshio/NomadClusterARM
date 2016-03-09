@@ -2,69 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "adminUsername": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "User name for the Virtual Machine."
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password for the Virtual Machine."
-      }
-    },
-    "dnsNameForPublicIP": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
-      }
-    },
-    "ubuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "14.04.2-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "15.04"
-      ],
-      "metadata": {
-        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.04."
-      }
-    },
-    "StorageAccount02Type": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_ZRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Premium_LRS"
-      ]
-    },
-    "VirtualMachine02Name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "VirtualMachine02AdminUserName": {
-      "type": "string",
-      "minLength": 1
-    },
-    "VirtualMachine02AdminPassword": {
-      "type": "securestring"
-    },
-    "VirtualMachine02UbuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "14.04.2-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "15.04"
-      ]
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -77,11 +14,24 @@
         "description": "Auto-generated token to access _artifactsLocation"
       }
     },
-    "projectName": {
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+    "adminUsername": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Name of this project"
+        "description": "User name for the Virtual Machine."
+      }
+    },
+    "dnsNameForPublicIP": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
     "NomadClusterStorageType": {
@@ -95,12 +45,37 @@
         "Premium_LRS"
       ]
     },
+    "projectName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of this project"
+      }
+    },
     "projectName2": {
       "type": "string",
       "minLength": 1,
       "metadata": {
         "description": "Name of this project"
       }
+    },
+    "projectName3": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of this project"
+      }
+    },
+    "StorageAccount02Type": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
     },
     "StorageAccount03Type": {
       "type": "string",
@@ -113,16 +88,48 @@
         "Premium_LRS"
       ]
     },
-    "VirtualMachine03Name": {
+    "ubuntuOSVersion": {
+      "type": "string",
+      "defaultValue": "14.04.2-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.2-LTS",
+        "15.04"
+      ],
+      "metadata": {
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.04."
+      }
+    },
+    "VirtualMachine02AdminPassword": {
+      "type": "securestring"
+    },
+    "VirtualMachine02AdminUserName": {
       "type": "string",
       "minLength": 1
+    },
+    "VirtualMachine02Name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "VirtualMachine02UbuntuOSVersion": {
+      "type": "string",
+      "defaultValue": "14.04.2-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.2-LTS",
+        "15.04"
+      ]
+    },
+    "VirtualMachine03AdminPassword": {
+      "type": "securestring"
     },
     "VirtualMachine03AdminUserName": {
       "type": "string",
       "minLength": 1
     },
-    "VirtualMachine03AdminPassword": {
-      "type": "securestring"
+    "VirtualMachine03Name": {
+      "type": "string",
+      "minLength": 1
     },
     "VirtualMachine03UbuntuOSVersion": {
       "type": "string",
@@ -132,53 +139,7 @@
         "14.04.2-LTS",
         "15.04"
       ]
-    },
-    "projectName3": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Name of this project"
-      }
     }
-  },
-  "variables": {
-    "imagePublisher": "Canonical",
-    "imageOffer": "UbuntuServer",
-    "OSDiskName": "osdiskforlinuxsimple",
-    "nicName": "myVMNic",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetName": "Subnet",
-    "subnetPrefix": "10.0.0.0/24",
-    "vhdStorageType": "Standard_LRS",
-    "publicIPAddressType": "Dynamic",
-    "vhdStorageContainerName": "vhds",
-    "vmName": "MyUbuntuVM",
-    "vmSize": "Standard_D1",
-    "virtualNetworkName": "MyVNET",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
-    "vhdStorageName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
-    "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
-    "VirtualMachine02ImagePublisher": "Canonical",
-    "VirtualMachine02ImageOffer": "UbuntuServer",
-    "VirtualMachine02OSDiskName": "VirtualMachine02OSDisk",
-    "VirtualMachine02VmSize": "Standard_D1",
-    "VirtualMachine02VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
-    "VirtualMachine02StorageAccountContainerName": "vhds",
-    "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
-    "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
-    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
-    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
-    "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
-    "VirtualMachine03ImagePublisher": "Canonical",
-    "VirtualMachine03ImageOffer": "UbuntuServer",
-    "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
-    "VirtualMachine03VmSize": "Standard_D1",
-    "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
-    "VirtualMachine03StorageAccountContainerName": "vhds",
-    "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
   },
   "resources": [
     {
@@ -553,5 +514,44 @@
         }
       ]
     }
-  ]
+  ],
+  "variables": {
+    "imagePublisher": "Canonical",
+    "imageOffer": "UbuntuServer",
+    "OSDiskName": "osdiskforlinuxsimple",
+    "nicName": "myVMNic",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetName": "Subnet",
+    "subnetPrefix": "10.0.0.0/24",
+    "vhdStorageType": "Standard_LRS",
+    "publicIPAddressType": "Dynamic",
+    "vhdStorageContainerName": "vhds",
+    "vmName": "MyUbuntuVM",
+    "vmSize": "Standard_D1",
+    "virtualNetworkName": "MyVNET",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+    "vhdStorageName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
+    "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
+    "VirtualMachine02ImagePublisher": "Canonical",
+    "VirtualMachine02ImageOffer": "UbuntuServer",
+    "VirtualMachine02OSDiskName": "VirtualMachine02OSDisk",
+    "VirtualMachine02VmSize": "Standard_D1",
+    "VirtualMachine02VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
+    "VirtualMachine02StorageAccountContainerName": "vhds",
+    "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
+    "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
+    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
+    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
+    "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
+    "VirtualMachine03ImagePublisher": "Canonical",
+    "VirtualMachine03ImageOffer": "UbuntuServer",
+    "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
+    "VirtualMachine03VmSize": "Standard_D1",
+    "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
+    "VirtualMachine03StorageAccountContainerName": "vhds",
+    "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
+  }
 }
