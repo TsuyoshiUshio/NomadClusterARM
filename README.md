@@ -10,3 +10,6 @@ This template include 3 Ubuntu 14.04-2-LTS instances with Docker and Nomad.
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FTsuyoshiUshio%2FNomadClusterARM%2Fmaster%2FNomadCluster%2FNomadCluster%2FTemplates%2FLinuxVirtualMachine.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
+
+## TODO
+Refactor the code smell.
