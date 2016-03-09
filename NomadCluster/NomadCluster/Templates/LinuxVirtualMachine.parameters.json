@@ -1,0 +1,27 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "azureuser"
+        },
+        "dnsNameForPublicIP": {
+            "value": "nm01"
+        },
+        "adminPassword": {
+            "value": "P@ssw0rd!"
+        },
+        "VirtualMachine02Name": {
+            "value": "nm02"
+        },
+        "VirtualMachine02AdminUserName": {
+            "value": "azureuser"
+        },
+        "VirtualMachine02AdminPassword": {
+            "value": "P@ssw0rd!"
+        },
+        "projectName": {
+            "value": "nomad"
+        }
+    }
+}
