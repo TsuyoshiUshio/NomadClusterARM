@@ -6,7 +6,7 @@
             "value": "azureuser"
         },
         "dnsNameForPublicIP": {
-            "value": "nmcl01"
+            "value": "nomadcl"
         },
         "adminPassword": {
             "value": "P@ssw0rd!"
@@ -14,17 +14,11 @@
         "VirtualMachine02Name": {
             "value": "nmcl02"
         },
-        "projectName": {
-            "value": "nomad"
-        },
-        "projectName2": {
-            "value": "nomad2"
-        },
         "VirtualMachine03Name": {
             "value": "nmcl03"
         },
-        "projectName3": {
-            "value": "nomad3"
+        "VirtualMachine01Name": {
+            "value": "nmcl01"
         }
     }
 }
