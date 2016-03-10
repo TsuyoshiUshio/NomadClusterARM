@@ -22,7 +22,7 @@
         "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "NomadClusterStorageType": {
+    "StorageAccount01Type": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "allowedValues": [
@@ -32,27 +32,6 @@
         "Standard_RAGRS",
         "Premium_LRS"
       ]
-    },
-    "projectName": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Name of this project"
-      }
-    },
-    "projectName2": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Name of this project"
-      }
-    },
-    "projectName3": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Name of this project"
-      }
     },
     "StorageAccount02Type": {
       "type": "string",
@@ -76,62 +55,35 @@
         "Premium_LRS"
       ]
     },
-    "ubuntuOSVersion": {
+    "VirtualMachine01Name": {
       "type": "string",
-      "defaultValue": "14.04.2-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "15.04"
-      ],
-      "metadata": {
-        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.04."
-      }
+      "minLength": 1
     },
     "VirtualMachine02Name": {
       "type": "string",
       "minLength": 1
     },
-    "VirtualMachine02UbuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "14.04.2-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "15.04"
-      ]
-    },
     "VirtualMachine03Name": {
       "type": "string",
       "minLength": 1
-    },
-    "VirtualMachine03UbuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "14.04.2-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "15.04"
-      ]
     }
   },
   "variables": {
+    "VirtualMachineUbuntuOSVersion": "14.04.2-LTS",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
     "OSDiskName": "osdiskforlinuxsimple",
-    "nicName": "myVMNic",
+    "nicName": "[concat(parameters('VirtualMachine01Name'), 'NetworkInterface')]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
-    "vhdStorageType": "Standard_LRS",
     "publicIPAddressType": "Dynamic",
     "vhdStorageContainerName": "vhds",
-    "vmName": "MyUbuntuVM",
     "vmSize": "Standard_D1",
     "virtualNetworkName": "MyVNET",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
-    "vhdStorageName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
+    "vhdStorageName": "[concat('sa01', uniqueString(resourceGroup().id))]",
     "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
     "VirtualMachine02ImagePublisher": "Canonical",
     "VirtualMachine02ImageOffer": "UbuntuServer",
@@ -141,7 +93,6 @@
     "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
     "VirtualMachine02StorageAccountContainerName": "vhds",
     "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
-    "NomadInstallScript01ScriptFolder": "[concat(parameters('projectName'), '/', 'CustomScripts')]",
     "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
     "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
     "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
@@ -164,7 +115,7 @@
         "displayName": "StorageAccount01"
       },
       "properties": {
-        "accountType": "[variables('vhdStorageType')]"
+        "accountType": "[parameters('StorageAccount01Type')]"
       }
     },
     {
@@ -238,7 +189,7 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[variables('vmName')]",
+      "name": "[parameters('VirtualMachine01Name')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "VirtualMachine01"
@@ -252,7 +203,7 @@
           "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[variables('vmName')]",
+          "computerName": "[parameters('VirtualMachine01Name')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -260,7 +211,7 @@
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
             "offer": "[variables('imageOffer')]",
-            "sku": "[parameters('ubuntuOSVersion')]",
+            "sku": "[variables('VirtualMachineUbuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
@@ -287,7 +238,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine01Name'))]"
           ],
           "tags": {
             "displayName": "NomadInstallScript01"
@@ -370,7 +321,7 @@
           "imageReference": {
             "publisher": "[variables('VirtualMachine02ImagePublisher')]",
             "offer": "[variables('VirtualMachine02ImageOffer')]",
-            "sku": "[parameters('VirtualMachine02UbuntuOSVersion')]",
+            "sku": "[variables('VirtualMachineUbuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
@@ -480,7 +431,7 @@
           "imageReference": {
             "publisher": "[variables('VirtualMachine03ImagePublisher')]",
             "offer": "[variables('VirtualMachine03ImageOffer')]",
-            "sku": "[parameters('VirtualMachine03UbuntuOSVersion')]",
+            "sku": "[variables('VirtualMachineUbuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
