@@ -88,13 +88,6 @@
         "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS, 15.04."
       }
     },
-    "VirtualMachine02AdminPassword": {
-      "type": "securestring"
-    },
-    "VirtualMachine02AdminUserName": {
-      "type": "string",
-      "minLength": 1
-    },
     "VirtualMachine02Name": {
       "type": "string",
       "minLength": 1
@@ -107,13 +100,6 @@
         "14.04.2-LTS",
         "15.04"
       ]
-    },
-    "VirtualMachine03AdminPassword": {
-      "type": "securestring"
-    },
-    "VirtualMachine03AdminUserName": {
-      "type": "string",
-      "minLength": 1
     },
     "VirtualMachine03Name": {
       "type": "string",
@@ -377,8 +363,8 @@
         },
         "osProfile": {
           "computerName": "[parameters('VirtualMachine02Name')]",
-          "adminUsername": "[parameters('VirtualMachine02AdminUsername')]",
-          "adminPassword": "[parameters('VirtualMachine02AdminPassword')]"
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -487,8 +473,8 @@
         },
         "osProfile": {
           "computerName": "[parameters('VirtualMachine03Name')]",
-          "adminUsername": "[parameters('VirtualMachine03AdminUsername')]",
-          "adminPassword": "[parameters('VirtualMachine03AdminPassword')]"
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
