@@ -11,14 +11,8 @@
         "adminPassword": {
             "value": "P@ssw0rd!"
         },
-        "VirtualMachine02Name": {
-            "value": "nmcl02"
-        },
-        "VirtualMachine03Name": {
-            "value": "nmcl03"
-        },
-        "VirtualMachine01Name": {
-            "value": "nmcl01"
+        "VirtualMachineName": {
+            "value": "vm"
         }
     }
 }
