@@ -22,7 +22,7 @@
         "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "StorageAccount01Type": {
+    "StorageAccountType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "allowedValues": [
@@ -33,89 +33,64 @@
         "Premium_LRS"
       ]
     },
-    "StorageAccount02Type": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_ZRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Premium_LRS"
-      ]
-    },
-    "StorageAccount03Type": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_ZRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Premium_LRS"
-      ]
-    },
-    "VirtualMachine01Name": {
+    "VirtualMachineName": {
       "type": "string",
       "minLength": 1
     },
-    "VirtualMachine02Name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "VirtualMachine03Name": {
-      "type": "string",
-      "minLength": 1
+    "VMCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description":  "Number of the VM instances."
+      }
+
     }
   },
   "variables": {
-    "VirtualMachineUbuntuOSVersion": "14.04.2-LTS",
-    "imagePublisher": "Canonical",
-    "imageOffer": "UbuntuServer",
-    "OSDiskName": "osdiskforlinuxsimple",
-    "nicName": "[concat(parameters('VirtualMachine01Name'), 'NetworkInterface')]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressType": "Dynamic",
-    "vhdStorageContainerName": "vhds",
-    "vmSize": "Standard_D1",
     "virtualNetworkName": "MyVNET",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
-    "vhdStorageName": "[concat('sa01', uniqueString(resourceGroup().id))]",
+    "VirtualMachineUbuntuOSVersion": "14.04.2-LTS",
+    "imagePublisher": "Canonical",
+    "imageOffer": "UbuntuServer",
+    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
+    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
+    "Count": "[sub(parameters('VMCount'), 1)]",
+
+    "VirtualMachine01Name": "[concat(parameters('VirtualMachineName'), '0')]",
+    "StorageAccount01Name": "[concat('sa01', uniqueString(resourceGroup().id))]",
+    "VirtualMachine01OSDiskName": "osdiskforlinuxsimple",
+    "VirtualMachine01VmSize": "Standard_D1",
+    "VirtualMachine01VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "VirtualMachine01SubnetRef": "[concat(variables('VirtualMachine01VnetID'), '/subnets/', variables('subnetName'))]",
+    "VirtualMachine01StorageAccountContainerName": "vhds",
+    "VirtualMachine01NicName": "[concat(concat(parameters('VirtualMachineName'), 'Nic'), '0')]",
+
+    "VirtualMachine02Name": "[parameters('VirtualMachineName')]",
     "StorageAccount02Name": "[concat('sa02', uniqueString(resourceGroup().id))]",
-    "VirtualMachine02ImagePublisher": "Canonical",
-    "VirtualMachine02ImageOffer": "UbuntuServer",
+
     "VirtualMachine02OSDiskName": "VirtualMachine02OSDisk",
     "VirtualMachine02VmSize": "Standard_D1",
     "VirtualMachine02VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
     "VirtualMachine02SubnetRef": "[concat(variables('VirtualMachine02VnetID'), '/subnets/', variables('subnetName'))]",
     "VirtualMachine02StorageAccountContainerName": "vhds",
-    "VirtualMachine02NicName": "[concat(parameters('VirtualMachine02Name'), 'NetworkInterface')]",
-    "NomadInstallScript01ScriptFileName": "NomadInstallScript01.sh",
-    "NomadInstallShellURL": "https://raw.githubusercontent.com/TsuyoshiUshio/NomadClusterARM/master/NomadCluster/NomadCluster/CustomScripts/NomadInstallScript01.sh",
-    "StorageAccount03Name": "[concat('sa03', uniqueString(resourceGroup().id))]",
-    "VirtualMachine03ImagePublisher": "Canonical",
-    "VirtualMachine03ImageOffer": "UbuntuServer",
-    "VirtualMachine03OSDiskName": "VirtualMachine03OSDisk",
-    "VirtualMachine03VmSize": "Standard_D1",
-    "VirtualMachine03VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-    "VirtualMachine03SubnetRef": "[concat(variables('VirtualMachine03VnetID'), '/subnets/', variables('subnetName'))]",
-    "VirtualMachine03StorageAccountContainerName": "vhds",
-    "VirtualMachine03NicName": "[concat(parameters('VirtualMachine03Name'), 'NetworkInterface')]"
+  
+    "VirtualMachine02NicName": "[concat(parameters('VirtualMachineName'), 'Nic')]"
+
   },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('vhdStorageName')]",
+      "name": "[variables('StorageAccount01Name')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "StorageAccount01"
       },
       "properties": {
-        "accountType": "[parameters('StorageAccount01Type')]"
+        "accountType": "[parameters('StorageAccountType')]"
       }
     },
     {
@@ -160,7 +135,7 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('nicName')]",
+      "name": "[variables('VirtualMachine01NicName')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "VirtualMachine01Nic"
@@ -179,7 +154,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('dnsNameForPublicIP'))]"
               },
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[variables('VirtualMachine01SubnetRef')]"
               }
             }
           }
@@ -189,21 +164,21 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('VirtualMachine01Name')]",
+      "name": "[variables('VirtualMachine01Name')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "VirtualMachine01"
       },
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('vhdStorageName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccount01Name'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('VirtualMachine01NicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
+          "vmSize": "[variables('VirtualMachine01VmSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('VirtualMachine01Name')]",
+          "computerName": "[variables('VirtualMachine01Name')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -217,7 +192,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', variables('vhdStorageName'), '.blob.core.windows.net/', variables('vhdStorageContainerName'), '/', variables('OSDiskName'), '.vhd')]"
+              "uri": "[concat('http://', variables('StorageAccount01Name'), '.blob.core.windows.net/', variables('VirtualMachine01StorageAccountContainerName'), '/', variables('VirtualMachine01OSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -226,7 +201,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VirtualMachine01NicName'))]"
             }
           ]
         }
@@ -238,7 +213,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine01Name'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', variables('VirtualMachine01Name'))]"
           ],
           "tags": {
             "displayName": "NomadInstallScript01"
@@ -259,20 +234,24 @@
       ]
     },
     {
-      "name": "[variables('StorageAccount02Name')]",
+      "name": "[concat(variables('StorageAccount02Name'), add(copyIndex(),1))]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "StorageAccount02"
+        "displayName": "[concat('StorageAccountName-', add(copyIndex(),1))]"
+      },
+      "copy": {
+        "name": "storageCopy",
+        "count": "[variables('Count')]"
       },
       "properties": {
-        "accountType": "[parameters('StorageAccount02Type')]"
+        "accountType": "[parameters('StorageAccountType')]"
       }
     },
     {
-      "name": "[variables('VirtualMachine02NicName')]",
+      "name": "[concat(variables('VirtualMachine02NicName'), add(copyIndex(),1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
@@ -280,7 +259,11 @@
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
       ],
       "tags": {
-        "displayName": "VirtualMachine02Nic"
+        "displayName": "[concat('VirtualMachineNic-', add(copyIndex(),1))]"
+      },
+      "copy": {
+        "name": "nicCopy",
+        "count": "[variables('Count')]"
       },
       "properties": {
         "ipConfigurations": [
@@ -297,37 +280,41 @@
       }
     },
     {
-      "name": "[parameters('VirtualMachine02Name')]",
+      "name": "[concat(variables('VirtualMachine02Name'), add(copyIndex(),1))]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccount02Name'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('VirtualMachine02NicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', concat(variables('StorageAccount02Name'), add(copyIndex(),1)))]",
+        "[concat('Microsoft.Network/networkInterfaces/', concat(variables('VirtualMachine02NicName')), add(copyIndex(),1))]"
       ],
       "tags": {
-        "displayName": "VirtualMachine02"
+        "displayName": "[concat('VirtualMachine-', add(copyIndex(),1))]"
+      },
+      "copy": {
+        "name": "vmCopy",
+        "count": "[variables('Count')]"
       },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('VirtualMachine02VmSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('VirtualMachine02Name')]",
+          "computerName": "[concat(variables('VirtualMachine02Name'), add(copyIndex(),1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[variables('VirtualMachine02ImagePublisher')]",
-            "offer": "[variables('VirtualMachine02ImageOffer')]",
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
             "sku": "[variables('VirtualMachineUbuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "VirtualMachine02OSDisk",
+            "name": "[concat('VirtualMachineOSDisk-', add(copyIndex(),1))]",
             "vhd": {
-              "uri": "[concat('http://', variables('StorageAccount02Name'), '.blob.core.windows.net/', variables('VirtualMachine02StorageAccountContainerName'), '/', variables('VirtualMachine02OSDiskName'), '.vhd')]"
+              "uri": "[concat('http://', concat(variables('StorageAccount02Name'), add(copyIndex(),1)), '.blob.core.windows.net/', variables('VirtualMachine02StorageAccountContainerName'), '/', variables('VirtualMachine02OSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -336,7 +323,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VirtualMachine02NicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('VirtualMachine02NicName'), add(copyIndex(),1)))]"
             }
           ]
         }
@@ -348,120 +335,11 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine02Name'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', concat(variables('VirtualMachine02Name'), add(copyIndex(),1)))]",
+            "[concat('Microsoft.Compute/virtualMachines/', variables('VirtualMachine01Name'))]"
           ],
           "tags": {
-            "displayName": "NomadInstallShellScript02"
-          },
-          "properties": {
-            "publisher": "Microsoft.OSTCExtensions",
-            "type": "CustomScriptForLinux",
-            "typeHandlerVersion": "1.4",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "[variables('NomadInstallShellURL')]"
-              ],
-              "commandToExecute": "bash NomadInstallScript01.sh"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "[variables('StorageAccount03Name')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "StorageAccount03"
-      },
-      "properties": {
-        "accountType": "[parameters('StorageAccount03Type')]"
-      }
-    },
-    {
-      "name": "[variables('VirtualMachine03NicName')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-      ],
-      "tags": {
-        "displayName": "VirtualMachine03Nic"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[variables('VirtualMachine03SubnetRef')]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[parameters('VirtualMachine03Name')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccount03Name'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('VirtualMachine03NicName'))]"
-      ],
-      "tags": {
-        "displayName": "VirtualMachine03"
-      },
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "[variables('VirtualMachine03VmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[parameters('VirtualMachine03Name')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('VirtualMachine03ImagePublisher')]",
-            "offer": "[variables('VirtualMachine03ImageOffer')]",
-            "sku": "[variables('VirtualMachineUbuntuOSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "VirtualMachine03OSDisk",
-            "vhd": {
-              "uri": "[concat('http://', variables('StorageAccount03Name'), '.blob.core.windows.net/', variables('VirtualMachine03StorageAccountContainerName'), '/', variables('VirtualMachine03OSDiskName'), '.vhd')]"
-            },
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          }
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VirtualMachine03NicName'))]"
-            }
-          ]
-        }
-      },
-      "resources": [
-        {
-          "name": "NomadInstallScript03",
-          "type": "extensions",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('VirtualMachine03Name'))]"
-          ],
-          "tags": {
-            "displayName": "NomadInstallScript03"
+            "displayName": "[concat('NomadInstallShellScript-', add(copyIndex(),1))]"
           },
           "properties": {
             "publisher": "Microsoft.OSTCExtensions",
