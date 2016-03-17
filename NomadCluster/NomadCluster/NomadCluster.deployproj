@@ -30,6 +30,7 @@
     <Folder Include="Tools\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CustomScripts\SerfInstallScript01.sh" />
     <Content Include="CustomScripts\NomadInstallScript01.sh" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
